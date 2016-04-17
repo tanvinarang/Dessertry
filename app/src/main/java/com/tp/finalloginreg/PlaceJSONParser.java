@@ -16,7 +16,7 @@ public class PlaceJSONParser {
         JSONArray jPlaces = null;
         try {
             /** Retrieves all the elements in the 'places' array */
-            jPlaces = jObject.getJSONArray("results");
+            jPlaces = jObject.getJSONArray("result");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -50,29 +50,28 @@ public class PlaceJSONParser {
     private HashMap<String, String> getPlace(JSONObject jPlace){
 
         HashMap<String, String> place = new HashMap<String, String>();
-        String placeName = "-NA-";
-        String vicinity="-NA-";
+
         String latitude="";
         String longitude="";
 
         try {
             // Extracting Place name, if available
             if(!jPlace.isNull("name")){
-                placeName = jPlace.getString("name");
+                //placeName = jPlace.getString("name");
             }
 
             // Extracting Place Vicinity, if available
             if(!jPlace.isNull("vicinity")){
-                vicinity = jPlace.getString("vicinity");
+                //vicinity = jPlace.getString("vicinity");
             }
 
-            latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lat");
-            longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lng");
+            latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("latitude");
+            longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("longitude");
 
-            place.put("place_name", placeName);
-            place.put("vicinity", vicinity);
-            place.put("lat", latitude);
-            place.put("lng", longitude);
+            //place.put("place_name", placeName);
+           // place.put("vicinity", vicinity);
+            place.put("latitude", latitude);
+            place.put("longitude", longitude);
 
         } catch (JSONException e) {
             e.printStackTrace();

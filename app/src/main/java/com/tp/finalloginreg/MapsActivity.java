@@ -102,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             // Getting Google Map
             mGoogleMap = fragment.getMap();
 
+
             // Enabling MyLocation in Google Map
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -135,12 +136,12 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 double longitude = location.getLongitude();
                 String lat = String.valueOf(latitude);
                 String Long = String.valueOf(longitude);
-                String url = "http://dessertry.comlu.com/retrieve.php";
+                String url1 = "http://dessertry.comlu.com/retrieve.php";
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("latitude",lat);
                 params.put("longitude",Long);
 
-                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url1, params, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -165,15 +166,15 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 @Override
                 public void onClick(View v) {
 
-                    EditText addr = (EditText) findViewById(R.id.ET_addr);
-                    String type = addr.getText().toString();
+                   // EditText addr = (EditText) findViewById(R.id.ET_addr);
+                    //String type = addr.getText().toString();
 
-                    StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+                    StringBuilder sb = new StringBuilder("http://dessertry.comlu.com/retrieve.php");
                     sb.append("location=" + mLatitude + "," + mLongitude);
-                    sb.append("&radius=5000");
+                   /* sb.append("&radius=5000");
                     sb.append("&types=" + type);
                     sb.append("&sensor=true");
-                    sb.append("&key=AIzaSyBcyvIh_rmMzJmn6En7Yi42-mMC-srFaTM");
+                    sb.append("&key=AIzaSyBcyvIh_rmMzJmn6En7Yi42-mMC-srFaTM");*/
 
                     // Creating a new non-ui thread task to download json data
                     PlacesTask placesTask = new PlacesTask();
@@ -277,7 +278,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 places = placeJsonParser.parse(jObject);
 
             }catch(Exception e){
-                Log.d("Exception",e.toString());
+                Log.d("Exception!!",e.toString());
             }
             return places;
         }
@@ -298,16 +299,16 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 HashMap<String, String> hmPlace = list.get(i);
 
                 // Getting latitude of the place
-                double lat = Double.parseDouble(hmPlace.get("lat"));
+                double lat = Double.parseDouble(hmPlace.get("latitude"));
 
                 // Getting longitude of the place
-                double lng = Double.parseDouble(hmPlace.get("lng"));
+                double lng = Double.parseDouble(hmPlace.get("longitude"));
 
                 // Getting name
-                String name = hmPlace.get("place_name");
+               // String name = hmPlace.get("place_name");
 
                 // Getting vicinity
-                String vicinity = hmPlace.get("vicinity");
+               // String vicinity = hmPlace.get("vicinity");
 
                 LatLng latLng = new LatLng(lat, lng);
 
@@ -316,7 +317,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
                 // Setting the title for the marker.
                 //This will be displayed on taping the marker
-                markerOptions.title(name + " : " + vicinity);
+                //markerOptions.title(name + " : " + vicinity);
 
                 // Placing a marker on the touched position
                 mGoogleMap.addMarker(markerOptions);
