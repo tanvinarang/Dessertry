@@ -11,7 +11,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.Manifest;
@@ -34,6 +36,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -69,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         // Array of place type names
         mPlaceTypeName = getResources().getStringArray(R.array.place_type_name);
 
-          
+
             Button btnFind;
 
             // Getting reference to Find Button
@@ -122,9 +127,35 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             // Getting Current Location From GPS
             Location location = locationManager.getLastKnownLocation(provider);
 
+
             if (location != null) {
                 onLocationChanged(location);
-            }
+                // sending location from android to php server using volley
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                String lat = String.valueOf(latitude);
+                String Long = String.valueOf(longitude);
+                String url = "http://dessertry.comlu.com/retrieve.php";
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("latitude",lat);
+                params.put("longitude",Long);
+
+                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response: ", response.toString());
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError response) {
+                        Log.d("Response: ", response.toString());
+                    }
+                });
+                AppController.getInstance().addToRequestQueue(jsObjRequest);
+            }// sent!
 
             locationManager.requestLocationUpdates(provider, 20000, 0, this);
 
