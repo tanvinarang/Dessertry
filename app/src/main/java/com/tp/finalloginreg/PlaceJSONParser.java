@@ -1,12 +1,12 @@
 package com.tp.finalloginreg;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PlaceJSONParser {
 
@@ -55,18 +55,9 @@ public class PlaceJSONParser {
         String longitude="";
 
         try {
-            // Extracting Place name, if available
-            if(!jPlace.isNull("name")){
-                //placeName = jPlace.getString("name");
-            }
 
-            // Extracting Place Vicinity, if available
-            if(!jPlace.isNull("vicinity")){
-                //vicinity = jPlace.getString("vicinity");
-            }
-
-            latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("latitude");
-            longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("longitude");
+            latitude = jPlace.getString("latitude");
+            longitude = jPlace.getString("longitude");
 
             //place.put("place_name", placeName);
            // place.put("vicinity", vicinity);

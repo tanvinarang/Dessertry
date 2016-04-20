@@ -1,21 +1,5 @@
 package com.tp.finalloginreg;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.Manifest;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
@@ -28,36 +12,36 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MapsActivity extends FragmentActivity implements LocationListener {
 
-    private GoogleApiClient mGoogleApiClient;
+
     GoogleMap mGoogleMap;
-
-
-    String[] mPlaceType = null;
-    String[] mPlaceTypeName = null;
-
     double mLatitude = 0;
     double mLongitude = 0;
 
@@ -67,15 +51,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        // Array of place types
-        mPlaceType = getResources().getStringArray(R.array.place_type);
-
-        // Array of place type names
-        mPlaceTypeName = getResources().getStringArray(R.array.place_type_name);
-
-
-            Button btnFind;
+        Button btnFind;
 
             // Getting reference to Find Button
             btnFind = (Button) findViewById(R.id.btn_find);
@@ -136,12 +112,12 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                 double longitude = location.getLongitude();
                 String lat = String.valueOf(latitude);
                 String Long = String.valueOf(longitude);
-                String url1 = "http://dessertry.comlu.com/retrieve.php";
+                String url = "http://dessertry.comlu.com/retrieve.php";
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("latitude",lat);
                 params.put("longitude",Long);
 
-                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url1, params, new Response.Listener<JSONObject>() {
+                CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -161,39 +137,27 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             locationManager.requestLocationUpdates(provider, 20000, 0, this);
 
             // Setting click event lister for the find button
-            btnFind.setOnClickListener(new OnClickListener() {
+        btnFind.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-
-                   // EditText addr = (EditText) findViewById(R.id.ET_addr);
-                    //String type = addr.getText().toString();
-
-                    StringBuilder sb = new StringBuilder("http://dessertry.comlu.com/retrieve.php");
-                    sb.append("location=" + mLatitude + "," + mLongitude);
-                   /* sb.append("&radius=5000");
-                    sb.append("&types=" + type);
-                    sb.append("&sensor=true");
-                    sb.append("&key=AIzaSyBcyvIh_rmMzJmn6En7Yi42-mMC-srFaTM");*/
-
-                    // Creating a new non-ui thread task to download json data
-                    PlacesTask placesTask = new PlacesTask();
-
-                    // Invokes the "doInBackground()" method of the class PlaceTask
-                    placesTask.execute(sb.toString());
-
-                }
-            });
-
-        }
+            @Override
+            public void onClick(View v) {
+                //StringBuilder sb = new StringBuilder("http://dessertry.comlu.com/retrieve.php");
+                // Creating a new non-ui thread task to download json data
+                String url1 = "http://dessertry.comlu.com/retrieve.php";
+                PlacesTask placesTask = new PlacesTask();
+                // Invokes the "doInBackground()" method of the class PlaceTask
+                placesTask.execute(url1);
 
 
+            }
+        });
+    }
 
+                /** A method to download json data from url */
 
-
-    /** A method to download json data from url */
     private String downloadUrl(String strUrl) throws IOException{
         String data = "";
+
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
         try{
@@ -229,6 +193,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         }
 
         return data;
+
     }
 
     /** A class, to download Google Places */
@@ -240,12 +205,15 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
         @Override
         protected String doInBackground(String... url) {
             try{
+
                 data = downloadUrl(url[0]);
             }catch(Exception e){
                 Log.d("Background Task",e.toString());
             }
+
             return data;
-        }
+
+            }
 
         // Executed after the complete execution of doInBackground() method
         @Override
@@ -259,7 +227,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
     }
 
-    /** A class to parse the Google Places in JSON format */
+    /** A class to parse the String in JSON format */
     private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String,String>>>{
 
         JSONObject jObject;
