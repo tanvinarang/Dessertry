@@ -132,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
                     }
                 });
                 AppController.getInstance().addToRequestQueue(jsObjRequest);
-            }// sent!
+            }// sent! This is how I recieved : Value [{"longitude":"77.123177","latitude":"28.634327"},{"longitude":"77.121002","latitude":"28.634178"},{"longitude":"77.122719","latitude":"28.634445"},{"longitude":"77.120316","latitude":"28.639481"}] of type org.json.JSONArray cannot be converted to JSONObject
 
             locationManager.requestLocationUpdates(provider, 20000, 0, this);
 
@@ -143,10 +143,10 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
             public void onClick(View v) {
                 //StringBuilder sb = new StringBuilder("http://dessertry.comlu.com/retrieve.php");
                 // Creating a new non-ui thread task to download json data
-                String url1 = "http://dessertry.comlu.com/retrieve.php";
+                String str_url = "http://dessertry.comlu.com/retrieve.php";
                 PlacesTask placesTask = new PlacesTask();
                 // Invokes the "doInBackground()" method of the class PlaceTask
-                placesTask.execute(url1);
+                placesTask.execute(str_url);
 
 
             }
@@ -196,7 +196,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener {
 
     }
 
-    /** A class, to download Google Places */
+    /** A class, to download data */
     private class PlacesTask extends AsyncTask<String, Integer, String>{
 
         String data = null;
