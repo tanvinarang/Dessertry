@@ -10,23 +10,8 @@ import java.util.List;
 
 public class PlaceJSONParser {
 
-    /** Receives a JSONObject and returns a list */
-    public List<HashMap<String,String>> parse(JSONObject jObject){
 
-        JSONArray jPlaces = null;
-        try {
-            /** Retrieves all the elements in the 'places' array */
-            jPlaces = jObject.getJSONArray("result");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        /** Invoking getPlaces with the array of json object
-         * where each json object represent a place
-         */
-        return getPlaces(jPlaces);
-    }
-
-    private List<HashMap<String, String>> getPlaces(JSONArray jPlaces){
+    public List<HashMap<String, String>> getPlaces(JSONArray jPlaces){
         int placesCount = jPlaces.length();
         List<HashMap<String, String>> placesList = new ArrayList<HashMap<String,String>>();
         HashMap<String, String> place = null;
@@ -53,13 +38,14 @@ public class PlaceJSONParser {
 
         String latitude="";
         String longitude="";
+        String name="";
 
         try {
-
+            name=jPlace.getString("Name");
             latitude = jPlace.getString("latitude");
             longitude = jPlace.getString("longitude");
 
-            //place.put("place_name", placeName);
+            place.put("place_name", name);
            // place.put("vicinity", vicinity);
             place.put("latitude", latitude);
             place.put("longitude", longitude);
