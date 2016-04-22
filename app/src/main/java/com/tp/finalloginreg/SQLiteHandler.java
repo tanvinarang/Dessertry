@@ -1,6 +1,9 @@
+/**********
+ * author: Tanvi@
+ * description: Local Database to store information about the users which inserts data in table when the user
+ * logs and deletes from the table when the user logs out.
+ **********/
 package com.tp.finalloginreg;
-
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

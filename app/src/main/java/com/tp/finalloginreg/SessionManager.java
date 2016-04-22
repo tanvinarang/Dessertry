@@ -1,9 +1,9 @@
+
 package com.tp.finalloginreg;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
-
 public class SessionManager {
     // LogCat tag
     private static String TAG = SessionManager.class.getSimpleName();

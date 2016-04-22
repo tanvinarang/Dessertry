@@ -1,9 +1,8 @@
+/**********
+ * author: Tanvi@
+ * description: This is the activity displayed when the user logs in containing name,'find desserts near me' and logout button.
+ **********/
 package com.tp.finalloginreg;
-
-import com.tp.finalloginreg.SQLiteHandler;
-import com.tp.finalloginreg.SessionManager;
-
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,11 +11,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 public class MainActivity extends Activity {
 
     private TextView txtName;
     private TextView txtEmail;
-    private Button btnLogout,Search;
+    private Button btnLogout;
 
     private SQLiteHandler db;
     private SessionManager session;

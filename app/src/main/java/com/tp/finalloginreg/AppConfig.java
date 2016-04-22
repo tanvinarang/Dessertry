@@ -1,3 +1,7 @@
+/**********
+ * author: Tanvi@
+ * description: Contains all the urls used to connect to php pages stored on the server.
+ **********/
 package com.tp.finalloginreg;
 public class AppConfig {
     // Server user login url

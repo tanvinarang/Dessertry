@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dip"
             android:background="@null"
-            android:text="@string/btn_link_to_register"
+            android:text="Not a user? Sign up now!"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="15dp" />

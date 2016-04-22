@@ -1,28 +1,25 @@
+/**********
+ * author: Tanvi@
+ * description: Displays the register activity which stores name,email and password and and insert in database using php
+ **********/
 package com.tp.finalloginreg;
-
-
-            import android.app.Activity;
-            import android.app.ProgressDialog;
-            import android.content.Intent;
-            import android.os.Bundle;
-            import android.util.Log;
-            import android.view.View;
-            import android.widget.Button;
-            import android.widget.EditText;
-            import android.widget.Toast;
-
-            import com.android.volley.Request.Method;
-            import com.android.volley.Response;
-            import com.android.volley.VolleyError;
-            import com.android.volley.toolbox.StringRequest;
-
-            import org.json.JSONException;
-            import org.json.JSONObject;
-
-            import java.util.HashMap;
-            import java.util.Map;
-
-
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import com.android.volley.Request.Method;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();

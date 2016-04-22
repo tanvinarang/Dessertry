@@ -1,6 +1,5 @@
+
 package com.tp.finalloginreg;
-
-
 import android.app.Application;
 import android.text.TextUtils;
 
