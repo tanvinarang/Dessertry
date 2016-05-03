@@ -16,7 +16,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="31dp"
-        android:layout_marginEnd="31dp" />
+        android:layout_marginEnd="31dp"
+        android:onClick="onClick"/>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/map"

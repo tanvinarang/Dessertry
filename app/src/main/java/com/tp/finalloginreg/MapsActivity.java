@@ -9,6 +9,7 @@ package com.tp.finalloginreg;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -19,10 +20,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.Pair;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -59,9 +62,10 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        Button btnFind;
-        // Getting reference to Find Button
-        btnFind = (Button) findViewById(R.id.btn_find);
+
+
+
+
         // Getting Google Play availability status
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
         if (status != ConnectionResult.SUCCESS) { // Google Play Services are not available
@@ -102,6 +106,101 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
             // Getting Current Location From GPS
             Location location = locationManager.getLastKnownLocation(provider);
+            Button btnFind;
+            // Getting reference to Find Button
+            btnFind = (Button) findViewById(R.id.btn_find);
+
+
+            btnFind.setOnClickListener(new View.OnClickListener() {
+                                           @Override
+                                           public void onClick(View v) {
+                                               final ProgressDialog dialog = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
+                                               String tag_string_req = "place_mark";
+                                               final AutoCompleteTextView place = (AutoCompleteTextView) findViewById(R.id.AC_place);
+                                               final String mark_place = place.getText().toString();
+                                               String url = "http://dessertry.comlu.com/mark.php";
+                                               StringRequest strReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+                                                   @Override
+                                                   public void onResponse(String response) {
+                                                       Log.d("Search", "Search Response: " + response.toString());
+                                                       dialog.dismiss();
+                                                       try {
+
+                                                           JSONArray jsonarray = new JSONArray(response);
+                                                           List<HashMap<String, String>> places = null;
+                                                           PlaceJSONParser placeJsonParser = new PlaceJSONParser();
+
+                                                           places = placeJsonParser.getPlaces(jsonarray);
+                                                           //Log.d("HEY", "did it" + res);
+                                                           //Clears all the existing markers
+                                                           mGoogleMap.clear();
+
+                                                           for (int i = 0; i < places.size(); i++) {
+
+                                                               // Creating a marker
+                                                               MarkerOptions markerOptions = new MarkerOptions();
+
+                                                               // Getting a place from the places list
+                                                               HashMap<String, String> hmPlace = places.get(i);
+
+                                                               // Getting latitude of the place
+                                                               double lat = Double.parseDouble(hmPlace.get("latitude"));
+
+                                                               // Getting longitude of the place
+                                                               double lng = Double.parseDouble(hmPlace.get("longitude"));
+
+                                                               // Getting name
+                                                               String name = hmPlace.get("place_name");
+
+                                                               // Getting vicinity
+                                                               // String vicinity = hmPlace.get("vicinity");
+
+                                                               LatLng latLng = new LatLng(lat, lng);
+
+                                                               // Setting the position for the marker
+                                                               markerOptions.position(latLng);
+
+                                                               // Setting the title for the marker.
+                                                               //This will be displayed on taping the marker
+                                                               markerOptions.title(name);
+
+                                                               // Placing a marker on the touched position
+                                                               mGoogleMap.addMarker(markerOptions);
+                                                           }
+
+
+                                                       } catch (JSONException e) {
+                                                           // JSON error
+                                                           e.printStackTrace();
+                                                           Log.d("Exception", "Json error: " + e.getMessage());
+                                                       }
+
+                                                   }
+                                               }, new Response.ErrorListener() {
+
+                                                   @Override
+                                                   public void onErrorResponse(VolleyError error) {
+                                                       Log.e("ERROR", "Search Error: " + error.getMessage());
+                                                       Toast.makeText(getApplicationContext(),
+                                                               error.getMessage(), Toast.LENGTH_LONG).show();
+
+                                                   }
+                                               }) {
+
+                                                   @Override
+                                                   protected Map<String, String> getParams() {
+                                                       // Posting params to register url
+                                                       Map<String, String> params = new HashMap<String, String>();
+                                                       params.put("name", mark_place);
+                                                       return params;
+                                                   }
+
+                                               };
+                                               AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                                           }
+                                       });
+
 
 
             Map<String, String> params = null;
@@ -113,6 +212,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
                 double longitude = location.getLongitude();
                 final String lat = String.valueOf(latitude);
                 final String Long = String.valueOf(longitude);
+                final ProgressDialog dialog = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
                 String url = "http://dessertry.comlu.com/retrieve.php";
                 StringRequest strReqfetch = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                     List<Pair<String, String>> params = new ArrayList<>();
@@ -122,6 +222,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
                     public void onResponse(String response) {
 
                         Log.d("SUCCESS", "Find Response: " + response.toString());
+                        dialog.dismiss();
                         try {
 
                             JSONArray jsonarray = new JSONArray(response);
@@ -239,6 +340,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
                             e.printStackTrace();
                             Log.d("Exception", "Json error: " + e.getMessage());
                         }
+
                         autoComplete(res);
                     }
 
@@ -266,9 +368,11 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
     public void autoComplete(ArrayList<String> results) {
         final AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.AC_place);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, results);
+
         textView.setAdapter(adapter);
 
     }
+
 
     // finding the user's current location
     @Override
