@@ -41,11 +41,13 @@ public class PlaceJSONParser {
         String latitude="";
         String longitude="";
         String name="";
+        String rating="";
 
         try {
             name=jPlace.getString("Name");
             latitude = jPlace.getString("latitude");
             longitude = jPlace.getString("longitude");
+
 
             place.put("place_name", name);
            // place.put("vicinity", vicinity);

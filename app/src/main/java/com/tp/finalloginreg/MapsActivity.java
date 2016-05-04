@@ -8,8 +8,10 @@
 package com.tp.finalloginreg;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -109,103 +111,224 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
             Button btnFind;
             // Getting reference to Find Button
             btnFind = (Button) findViewById(R.id.btn_find);
-
-
             btnFind.setOnClickListener(new View.OnClickListener() {
-                                           @Override
-                                           public void onClick(View v) {
-                                               final ProgressDialog dialog = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
-                                               String tag_string_req = "place_mark";
-                                               final AutoCompleteTextView place = (AutoCompleteTextView) findViewById(R.id.AC_place);
-                                               final String mark_place = place.getText().toString();
-                                               String url = "http://dessertry.comlu.com/mark.php";
-                                               StringRequest strReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onClick(View v) {
+                    final ProgressDialog dialog = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
+                    String tag_string_req = "place_mark";
+                    final AutoCompleteTextView place = (AutoCompleteTextView) findViewById(R.id.AC_place);
+                    final String mark_place = place.getText().toString();
+                    String url = "http://dessertry.comlu.com/mark.php";
+                    StringRequest strReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
-                                                   @Override
-                                                   public void onResponse(String response) {
-                                                       Log.d("Search", "Search Response: " + response.toString());
-                                                       dialog.dismiss();
-                                                       try {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("Search", "Search Response: " + response.toString());
+                            dialog.dismiss();
+                            try {
 
-                                                           JSONArray jsonarray = new JSONArray(response);
-                                                           List<HashMap<String, String>> places = null;
-                                                           PlaceJSONParser placeJsonParser = new PlaceJSONParser();
+                                JSONArray jsonarray = new JSONArray(response);
+                                List<HashMap<String, String>> places = null;
+                                PlaceJSONParser placeJsonParser = new PlaceJSONParser();
 
-                                                           places = placeJsonParser.getPlaces(jsonarray);
-                                                           //Log.d("HEY", "did it" + res);
-                                                           //Clears all the existing markers
-                                                           mGoogleMap.clear();
+                                places = placeJsonParser.getPlaces(jsonarray);
+                                //Log.d("HEY", "did it" + res);
+                                //Clears all the existing markers
+                                mGoogleMap.clear();
 
-                                                           for (int i = 0; i < places.size(); i++) {
+                                for (int i = 0; i < places.size(); i++) {
 
-                                                               // Creating a marker
-                                                               MarkerOptions markerOptions = new MarkerOptions();
+                                    // Creating a marker
+                                    MarkerOptions markerOptions = new MarkerOptions();
 
-                                                               // Getting a place from the places list
-                                                               HashMap<String, String> hmPlace = places.get(i);
+                                    // Getting a place from the places list
+                                    HashMap<String, String> hmPlace = places.get(i);
 
-                                                               // Getting latitude of the place
-                                                               double lat = Double.parseDouble(hmPlace.get("latitude"));
+                                    // Getting latitude of the place
+                                    double lat = Double.parseDouble(hmPlace.get("latitude"));
 
-                                                               // Getting longitude of the place
-                                                               double lng = Double.parseDouble(hmPlace.get("longitude"));
+                                    // Getting longitude of the place
+                                    double lng = Double.parseDouble(hmPlace.get("longitude"));
 
-                                                               // Getting name
-                                                               String name = hmPlace.get("place_name");
+                                    // Getting name
+                                    String name = hmPlace.get("place_name");
 
-                                                               // Getting vicinity
-                                                               // String vicinity = hmPlace.get("vicinity");
+                                    // Getting vicinity
+                                    // String vicinity = hmPlace.get("vicinity");
 
-                                                               LatLng latLng = new LatLng(lat, lng);
+                                    LatLng latLng = new LatLng(lat, lng);
 
-                                                               // Setting the position for the marker
-                                                               markerOptions.position(latLng);
+                                    // Setting the position for the marker
+                                    markerOptions.position(latLng);
 
-                                                               // Setting the title for the marker.
-                                                               //This will be displayed on taping the marker
-                                                               markerOptions.title(name);
+                                    // Setting the title for the marker.
+                                    //This will be displayed on taping the marker
+                                    markerOptions.title(name);
 
-                                                               // Placing a marker on the touched position
-                                                               mGoogleMap.addMarker(markerOptions);
-                                                           }
-
-
-                                                       } catch (JSONException e) {
-                                                           // JSON error
-                                                           e.printStackTrace();
-                                                           Log.d("Exception", "Json error: " + e.getMessage());
-                                                       }
-
-                                                   }
-                                               }, new Response.ErrorListener() {
-
-                                                   @Override
-                                                   public void onErrorResponse(VolleyError error) {
-                                                       Log.e("ERROR", "Search Error: " + error.getMessage());
-                                                       Toast.makeText(getApplicationContext(),
-                                                               error.getMessage(), Toast.LENGTH_LONG).show();
-
-                                                   }
-                                               }) {
-
-                                                   @Override
-                                                   protected Map<String, String> getParams() {
-                                                       // Posting params to register url
-                                                       Map<String, String> params = new HashMap<String, String>();
-                                                       params.put("name", mark_place);
-                                                       return params;
-                                                   }
-
-                                               };
-                                               AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-                                           }
-                                       });
+                                    // Placing a marker on the touched position
+                                    mGoogleMap.addMarker(markerOptions);
+                                }
 
 
+                            } catch (JSONException e) {
+                                // JSON error
+                                e.printStackTrace();
+                                Log.d("Exception", "Json error: " + e.getMessage());
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("ERROR", "Search Error: " + error.getMessage());
+                            Toast.makeText(getApplicationContext(),
+                                    error.getMessage(), Toast.LENGTH_LONG).show();
+
+                        }
+                    }) {
+
+                        @Override
+                        protected Map<String, String> getParams() {
+                            // Posting params to register url
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("name", mark_place);
+                            return params;
+                        }
+
+                    };
+                    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+                }
+            });
+            //Adding dialog box for filter
+            final CharSequence[] items = {" Ratings 3.5+ "," Open now"," Radius < 3 ",};
+            Button btnFilter;
+            // Getting reference to Find Button
+            btnFilter = (Button) findViewById(R.id.btn_filter);
+            btnFilter.setOnClickListener(new View.OnClickListener() {
+                AlertDialog levelDialog;
+
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    builder.setTitle("Select the filter");
+
+                    builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int item) {
+
+
+                            switch (item) {
+                                case 0:
+                                    final ProgressDialog dialog1 = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
+                                    String tag_string_req = "rating";
+                                    final String ratings = "3.5";
+                                    String url = "http://dessertry.comlu.com/filter.php";
+                                    StringRequest strReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+                                        @Override
+                                        public void onResponse(String response) {
+                                            Log.d("Rating", "Rating Response: " + response.toString());
+                                            dialog1.dismiss();
+                                            try {
+
+                                                JSONArray jsonarray = new JSONArray(response);
+                                                List<HashMap<String, String>> places = null;
+                                                PlaceJSONParser placeJsonParser = new PlaceJSONParser();
+
+                                                places = placeJsonParser.getPlaces(jsonarray);
+                                                //Log.d("HEY", "did it" + res);
+                                                //Clears all the existing markers
+                                                mGoogleMap.clear();
+
+                                                for (int i = 0; i < places.size(); i++) {
+
+                                                    // Creating a marker
+                                                    MarkerOptions markerOptions = new MarkerOptions();
+
+                                                    // Getting a place from the places list
+                                                    HashMap<String, String> hmPlace = places.get(i);
+
+                                                    // Getting latitude of the place
+                                                    double lat = Double.parseDouble(hmPlace.get("latitude"));
+
+                                                    // Getting longitude of the place
+                                                    double lng = Double.parseDouble(hmPlace.get("longitude"));
+
+                                                    // Getting name
+                                                    String name = hmPlace.get("place_name");
+
+
+                                                    // Getting vicinity
+                                                    // String vicinity = hmPlace.get("vicinity");
+
+                                                    LatLng latLng = new LatLng(lat, lng);
+
+                                                    // Setting the position for the marker
+                                                    markerOptions.position(latLng);
+
+                                                    // Setting the title for the marker.
+                                                    //This will be displayed on taping the marker
+                                                    markerOptions.title(name);
+
+                                                    // Placing a marker on the touched position
+                                                    mGoogleMap.addMarker(markerOptions);
+                                                }
+
+
+                                            } catch (JSONException e) {
+                                                // JSON error
+                                                e.printStackTrace();
+                                                Log.d("Exception", "Json error: " + e.getMessage());
+                                            }
+
+                                        }
+                                    }, new Response.ErrorListener() {
+
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Log.e("ERROR", "Filter Error: " + error.getMessage());
+                                            Toast.makeText(getApplicationContext(),
+                                                    error.getMessage(), Toast.LENGTH_LONG).show();
+
+                                        }
+                                    }) {
+
+                                        @Override
+                                        protected Map<String, String> getParams() {
+                                            // Posting params to register url
+                                            Map<String, String> params = new HashMap<String, String>();
+                                            params.put("rating", ratings);
+                                            return params;
+                                        }
+
+                                    };
+                                    AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+
+                                    break;
+                                case 1:
+                                    // Your code when 2nd  option seletced
+
+                                    break;
+                                case 2:
+                                    // Your code when 3rd option seletced
+                                    break;
+
+
+                            }
+                            levelDialog.dismiss();
+                        }
+                    });
+                    levelDialog = builder.create();
+                    levelDialog.show();
+                }
+            }); // end of filter dialog box. Successfully created !! :D
 
             Map<String, String> params = null;
             if (location != null) {
                 onLocationChanged(location);
+
                 // sending location from android to php server using volley and mapping the nearby location
                 String tag_string_loc = "req_find_location";
                 double latitude = location.getLatitude();
