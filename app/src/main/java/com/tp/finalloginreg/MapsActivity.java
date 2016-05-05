@@ -314,11 +314,13 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
                                     //System.out.println("Current time => " + c.getTime());
                                     SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
                                     final String formattedTime = df.format(c.getTime());
+
                                     //System.out.println("Current time => " +formattedTime);
                                     final ProgressDialog dialog3 = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
                                     String tag_string_req_time = "time_open";
                                     final String time_open = formattedTime;
                                     String url3 = "http://dessertry.comlu.com/filter_time.php";
+
                                     StringRequest strReq_time = new StringRequest(Request.Method.POST, url3, new Response.Listener<String>() {
 
                                         @Override
