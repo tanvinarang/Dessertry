@@ -46,7 +46,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +109,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
             String provider = locationManager.getBestProvider(criteria, true);
 
             // Getting Current Location From GPS
-            Location location = locationManager.getLastKnownLocation(provider);
+            final Location location = locationManager.getLastKnownLocation(provider);
             Button btnFind;
             // Getting reference to Find Button
             btnFind = (Button) findViewById(R.id.btn_find);
@@ -308,10 +310,193 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
                                     break;
                                 case 1:
-                                    // Your code when 2nd  option seletced
+                                    Calendar c = Calendar.getInstance();
+                                    //System.out.println("Current time => " + c.getTime());
+                                    SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+                                    final String formattedTime = df.format(c.getTime());
+                                    //System.out.println("Current time => " +formattedTime);
+                                    final ProgressDialog dialog3 = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
+                                    String tag_string_req_time = "time_open";
+                                    final String time_open = formattedTime;
+                                    String url3 = "http://dessertry.comlu.com/filter_time.php";
+                                    StringRequest strReq_time = new StringRequest(Request.Method.POST, url3, new Response.Listener<String>() {
 
+                                        @Override
+                                        public void onResponse(String response) {
+                                            Log.d("Time_OPen", "Time Response: " + response.toString());
+                                            dialog3.dismiss();
+                                            try {
+
+                                                JSONArray jsonarray = new JSONArray(response);
+                                                List<HashMap<String, String>> places = null;
+                                                PlaceJSONParser placeJsonParser = new PlaceJSONParser();
+
+                                                places = placeJsonParser.getPlaces(jsonarray);
+                                                //Log.d("HEY", "did it" + res);
+                                                //Clears all the existing markers
+                                                mGoogleMap.clear();
+
+                                                for (int i = 0; i < places.size(); i++) {
+
+                                                    // Creating a marker
+                                                    MarkerOptions markerOptions = new MarkerOptions();
+
+                                                    // Getting a place from the places list
+                                                    HashMap<String, String> hmPlace = places.get(i);
+
+                                                    // Getting latitude of the place
+                                                    double lat = Double.parseDouble(hmPlace.get("latitude"));
+
+                                                    // Getting longitude of the place
+                                                    double lng = Double.parseDouble(hmPlace.get("longitude"));
+
+                                                    // Getting name
+                                                    String name = hmPlace.get("place_name");
+
+
+                                                    // Getting vicinity
+                                                    // String vicinity = hmPlace.get("vicinity");
+
+                                                    LatLng latLng = new LatLng(lat, lng);
+
+                                                    // Setting the position for the marker
+                                                    markerOptions.position(latLng);
+
+                                                    // Setting the title for the marker.
+                                                    //This will be displayed on taping the marker
+                                                    markerOptions.title(name);
+
+                                                    // Placing a marker on the touched position
+                                                    mGoogleMap.addMarker(markerOptions);
+                                                }
+
+
+                                            } catch (JSONException e) {
+                                                // JSON error
+                                                e.printStackTrace();
+                                                Log.d("Exception", "Json error: " + e.getMessage());
+                                            }
+
+                                        }
+                                    }, new Response.ErrorListener() {
+
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Log.e("ERROR", "Filter Error: " + error.getMessage());
+                                            Toast.makeText(getApplicationContext(),
+                                                    error.getMessage(), Toast.LENGTH_LONG).show();
+
+                                        }
+                                    }) {
+
+                                        @Override
+                                        protected Map<String, String> getParams() {
+                                            // Posting params to register url
+                                            Map<String, String> params = new HashMap<String, String>();
+                                            params.put("curr_time", formattedTime);
+                                            return params;
+                                        }
+
+                                    };
+                                    AppController.getInstance().addToRequestQueue(strReq_time, tag_string_req_time);
                                     break;
                                 case 2:
+                                    String tag_string_loc = "req_find_location_when_radius_3";
+                                    double latitude = location.getLatitude();
+                                    double longitude = location.getLongitude();
+                                    final String lat = String.valueOf(latitude);
+                                    final String Long = String.valueOf(longitude);
+                                    final String radius="1";
+                                    final ProgressDialog dialog2 = ProgressDialog.show(MapsActivity.this, "", "Please wait...", true);
+                                    String url1 = "http://dessertry.comlu.com/filter_radius.php";
+                                    StringRequest strReqfetch = new StringRequest(Request.Method.POST, url1, new Response.Listener<String>() {
+                                        List<Pair<String, String>> params = new ArrayList<>();
+                                        ArrayList<String> res = new ArrayList<String>();
+
+                                        @Override
+                                        public void onResponse(String response) {
+
+                                            Log.d("SUCCESS", "Find Response: " + response.toString());
+                                            dialog2.dismiss();
+                                            try {
+
+                                                JSONArray jsonarray = new JSONArray(response);
+                                                List<HashMap<String, String>> places = null;
+                                                PlaceJSONParser placeJsonParser = new PlaceJSONParser();
+
+                                                places = placeJsonParser.getPlaces(jsonarray);
+                                                //Log.d("HEY", "did it" + res);
+                                                //Clears all the existing markers
+                                                mGoogleMap.clear();
+
+                                                for (int i = 0; i < places.size(); i++) {
+
+                                                    // Creating a marker
+                                                    MarkerOptions markerOptions = new MarkerOptions();
+
+                                                    // Getting a place from the places list
+                                                    HashMap<String, String> hmPlace = places.get(i);
+
+                                                    // Getting latitude of the place
+                                                    double lat = Double.parseDouble(hmPlace.get("latitude"));
+
+                                                    // Getting longitude of the place
+                                                    double lng = Double.parseDouble(hmPlace.get("longitude"));
+
+                                                    // Getting name
+                                                    String name = hmPlace.get("place_name");
+
+                                                    // Getting vicinity
+                                                    // String vicinity = hmPlace.get("vicinity");
+
+                                                    LatLng latLng = new LatLng(lat, lng);
+
+                                                    // Setting the position for the marker
+                                                    markerOptions.position(latLng);
+
+                                                    // Setting the title for the marker.
+                                                    //This will be displayed on taping the marker
+                                                    markerOptions.title(name);
+
+                                                    // Placing a marker on the touched position
+                                                    mGoogleMap.addMarker(markerOptions);
+                                                }
+
+
+                                            } catch (JSONException e) {
+                                                // JSON error
+                                                e.printStackTrace();
+                                                Log.d("Exception", "Json error: " + e.getMessage());
+                                            }
+
+                                        }
+
+
+                                    }, new Response.ErrorListener() {
+
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Log.e("FETCH", "Fetch Error: " + error.getMessage());
+                                            Toast.makeText(getApplicationContext(),
+                                                    error.getMessage(), Toast.LENGTH_LONG).show();
+
+                                        }
+                                    }) {
+
+                                        @Override
+                                        protected Map<String, String> getParams() {
+                                            // Posting parameters to retrieve url
+                                            Map<String, String> params = new HashMap<String, String>();
+                                            params.put("latitude", lat);
+                                            params.put("longitude", Long);
+                                            params.put("radius",radius);
+
+                                            return params;
+                                        }
+
+                                    };
+                                    AppController.getInstance().addToRequestQueue(strReqfetch, tag_string_loc);
+
                                     // Your code when 3rd option seletced
                                     break;
 
