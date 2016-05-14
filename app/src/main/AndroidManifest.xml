@@ -28,6 +28,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
@@ -47,6 +48,10 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" />
+        <activity
+            android:name=".FbActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -60,6 +65,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+
+
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
@@ -68,6 +75,17 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+
+
+        <!--Adding Facebook Services-->
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:label="@string/app_name" />
+
     </application>
+
 
 </manifest>

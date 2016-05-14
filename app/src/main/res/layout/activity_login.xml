@@ -52,6 +52,30 @@
             android:text="@string/btn_login"
             android:textColor="@color/btn_login" />
 
+        <TextView
+            android:layout_width="312dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/info1"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:textSize="18sp"
+            />
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/fb"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#416BC1"
+            android:onClick="onClick"
+            android:text="Log in with Facebook"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
         <!-- Link to Login Screen -->
 
         <Button

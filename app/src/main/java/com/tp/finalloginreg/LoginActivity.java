@@ -1,23 +1,43 @@
 /**********
  * author: Tanvi@
  * description: Login activity which takes email and password as input and validates using php.
+ * It also includes Login with facebook using FB SDK 4
  **********/
 package com.tp.finalloginreg;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.Profile;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,16 +51,75 @@ public class LoginActivity extends Activity {
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    private  Button fb;
+    private LoginButton loginButton;
+    private TextView info;
+    private CallbackManager callbackManager;
+    private  String username;
+    //Adding fb button
+
+    //
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        printHashKey();
         setContentView(R.layout.activity_login);
 
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
+
+        info = (TextView)findViewById(R.id.info1);
+        fb = (Button) findViewById(R.id.fb);
+        loginButton = (LoginButton)findViewById(R.id.login_button);
+       if (isLoggedIn()) {
+            Profile profile = Profile.getCurrentProfile();
+            if (profile != null) {
+                username = profile.getName().toString();
+                Log.d("FB", "fbname" + username);
+            }
+            Intent intent = new Intent(LoginActivity.this, FbActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
+            finish();
+
+        }
+
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                loginResult.getAccessToken().getToken();
+                Log.e("In onSuccess", "onsuccess");
+
+                    Profile profile = Profile.getCurrentProfile();
+                    if (profile != null) {
+                        username = profile.getName().toString();
+                        Log.d("FB", "fbname" + username);
+                    }
+                    Intent intent = new Intent(LoginActivity.this, FbActivity.class);
+                    intent.putExtra("username", username);
+                    startActivity(intent);
+                    finish();
+                }
+
+
+
+            @Override
+            public void onCancel() {
+                info.setText("Login attempt canceled.");
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                info.setText("Login attempt failed.");
+            }
+        });
+
+
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -93,10 +172,47 @@ public class LoginActivity extends Activity {
         });
 
     }
+    public void onClick(View v) {
+        if (v == fb) {
+            loginButton.performClick();
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+    public boolean isLoggedIn(){
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        Profile profile = Profile.getCurrentProfile();
+        //Attempts to recognize if the user has logged in before
+        if(accessToken !=null && profile !=null) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
-    /**
-     * function to verify login details in mysql db
-     * */
+    public void printHashKey(){
+        // Add code to print out the key hash
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.tp.finalloginreg",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+    }
+
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";

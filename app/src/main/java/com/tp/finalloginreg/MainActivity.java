@@ -25,11 +25,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         txtName = (TextView) findViewById(R.id.name);
         txtEmail = (TextView) findViewById(R.id.email);
         btnLogout = (Button) findViewById(R.id.btnLogout);
+
+
+
 
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
@@ -50,6 +54,7 @@ public class MainActivity extends Activity {
         // Displaying the user details on the screen
         txtName.setText(name);
         txtEmail.setText(email);
+
 
         // Logout button click event
         btnLogout.setOnClickListener(new View.OnClickListener() {

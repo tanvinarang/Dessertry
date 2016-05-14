@@ -62,10 +62,12 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
 
 
 
@@ -79,6 +81,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
             dialog.show();
 
         } else {
+
+
             // Getting reference to the SupportMapFragment
             SupportMapFragment fragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
